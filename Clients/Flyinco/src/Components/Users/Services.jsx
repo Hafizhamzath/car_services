@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 // ---- brand colors ----
 const BRAND_PRIMARY = "#4b0082";   // deep purple
@@ -59,28 +59,44 @@ const SERVICES = [
   },
 ];
 
+// --- Motion variants ---
+const headerVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+};
+
+const trackVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 14, scale: 0.98 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.45 } },
+};
+
 function ServiceCard({ id, name, slug, img, summary, isOpen, onToggle }) {
   return (
-    <div
-      className="
-        relative isolate
-        h-[32rem] w-[66vw] md:w-[22rem]
-        flex-none snap-center
-        rounded-2xl border-2 border-white/10
-        overflow-hidden
-        shadow-[0_8px_24px_rgba(0,0,0,0.35)]
-        will-change-transform
-      "
+    <motion.div
+      variants={cardVariants}
+      className="relative isolate h-[32rem] w-[66vw] md:w-[22rem] flex-none snap-center rounded-2xl overflow-hidden will-change-transform"
     >
+      {/* Subtle luxury border shimmer */}
+      <div className="absolute inset-0 rounded-2xl [mask-image:linear-gradient(180deg,black,transparent_85%)]">
+        <div className="absolute inset-0 rounded-2xl border border-white/15" />
+        <div className="absolute inset-0 rounded-2xl pointer-events-none bg-[linear-gradient(120deg,rgba(255,255,255,0.18),transparent_30%)] opacity-10" />
+      </div>
+
       <img
         src={img}
         alt={name}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover scale-[1.02]"
         loading="lazy"
       />
 
-      {/* 45–50% black overlay for contrast */}
-      <div className="absolute inset-0 bg-black/45 md:bg-black/50" />
+      {/* 45–50% black overlay for contrast with a soft gradient top glow */}
+      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-white/10 to-transparent" />
 
       {/* Top-left index label */}
       <div className="absolute left-4 top-4 z-10">
@@ -89,32 +105,37 @@ function ServiceCard({ id, name, slug, img, summary, isOpen, onToggle }) {
         </span>
       </div>
 
-      {/* Top-right toggle button: Plus -> Cross with 45° rotate */}
+      {/* Top-right toggle button: Plus -> Cross (45°) */}
       <button
         type="button"
         aria-label={isOpen ? `Close ${name} summary` : `Open ${name} summary`}
         aria-expanded={isOpen}
         onClick={(e) => {
           e.stopPropagation();
-          onToggle(); // parent handles pause/resume
+          onToggle();
         }}
         className="
           absolute right-4 top-4 z-10
           flex items-center justify-center
           h-11 w-11 md:h-[52px] md:w-[52px]
           rounded-full transition
-          shadow-[0_4px_8px_rgba(0,0,0,0.25)]
-          hover:shadow-[0_6px_14px_rgba(0,0,0,0.35)]
+          ring-1 ring-black/10
+          shadow-[0_8px_22px_rgba(0,0,0,0.35)]
+          hover:shadow-[0_10px_28px_rgba(0,0,0,0.45)]
         "
         style={{
-          backgroundColor: isOpen ? BRAND_PRIMARY : "#ffffff",
+          background: isOpen ? BRAND_PRIMARY : "rgba(255,255,255,0.95)",
           color: isOpen ? "#ffffff" : "#000000",
         }}
         onMouseEnter={(e) => {
-          if (!isOpen) e.currentTarget.style.backgroundColor = BRAND_PRIMARY;
+          if (!isOpen) e.currentTarget.style.background = BRAND_PRIMARY;
+          e.currentTarget.style.color = "#ffffff";
         }}
         onMouseLeave={(e) => {
-          if (!isOpen) e.currentTarget.style.backgroundColor = "#ffffff";
+          if (!isOpen) {
+            e.currentTarget.style.background = "rgba(255,255,255,0.95)";
+            e.currentTarget.style.color = "#000000";
+          }
         }}
       >
         <Plus
@@ -130,19 +151,17 @@ function ServiceCard({ id, name, slug, img, summary, isOpen, onToggle }) {
       {/* Bottom-center caption */}
       <div className="absolute inset-x-0 bottom-6 z-10 flex justify-center px-4">
         <div className="max-w-[80%] text-center">
-          <p className="text-[20px] font-semibold leading-tight text-white md:text-[28px]">
+          <p className="text-[20px] font-semibold leading-tight text-white md:text-[28px] drop-shadow-[0_3px_10px_rgba(0,0,0,0.45)]">
             {name}
           </p>
         </div>
       </div>
 
-      {/* Slide-up summary panel — transparent dark with white text */}
+      {/* Slide-up summary panel */}
       <div
-        className={`
-          absolute inset-x-0 bottom-0 z-20
-          px-4 pt-4 pb-5
-          bg-black/60 text-white
-          rounded-t-2xl
+        className={`absolute inset-x-0 bottom-0 z-20
+          px-4 pt-4 pb-5 bg-black/60 text-white
+          rounded-t-2xl backdrop-blur-sm
           transition-all duration-300 ease-out
           ${isOpen ? "translate-y-0 opacity-100" : "translate-y-full opacity-0 pointer-events-none"}
         `}
@@ -151,17 +170,14 @@ function ServiceCard({ id, name, slug, img, summary, isOpen, onToggle }) {
         <div className="mt-3 flex justify-center">
           <Link
             to={slug}
-            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium"
-            style={{
-              backgroundColor: BRAND_PRIMARY,
-              color: "#ffffff",
-            }}
+            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ring-1 ring-white/20"
+            style={{ backgroundColor: BRAND_PRIMARY, color: "#ffffff" }}
           >
             Learn more
           </Link>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -207,11 +223,8 @@ export default function ServicesCarousel() {
         const t = clamp((now - startTime) / duration, 0, 1);
         const eased = easing(t);
         track.scrollLeft = start + delta * eased;
-        if (t < 1) {
-          requestAnimationFrame(stepFrame);
-        } else {
-          resolve();
-        }
+        if (t < 1) requestAnimationFrame(stepFrame);
+        else resolve();
       };
       requestAnimationFrame(stepFrame);
     });
@@ -233,7 +246,6 @@ export default function ServicesCarousel() {
     const left = track.scrollLeft;
     const target = clamp(left + dir * s, 0, maxLeft());
 
-    // If we are at last slide and going forward => trigger slow sweep back to first
     const atLast = Math.abs(left - maxLeft()) < 6; // tolerance
     if (dir > 0 && atLast) {
       await sweepBackToFirst();
@@ -268,7 +280,6 @@ export default function ServicesCarousel() {
   };
 
   useEffect(() => {
-    // start at first slide
     requestAnimationFrame(() => {
       trackRef.current?.scrollTo({ left: 0, behavior: "auto" });
       startAuto();
@@ -277,14 +288,12 @@ export default function ServicesCarousel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // pause/resume when a panel is opened/closed
   useEffect(() => {
     if (openId) stopAuto();
     else startAuto();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openId]);
 
-  // track manual interaction state to pause auto-advance during drag
   const onPointerDown = () => {
     isUserInteractingRef.current = true;
     stopAuto();
@@ -294,87 +303,95 @@ export default function ServicesCarousel() {
     if (!openId && !isReturningRef.current) startAuto();
   };
 
-    // === Arrow Button (transparent background, dotted ring spin on hover) ===
   const ArrowButton = ({ onClick, children, ariaLabel }) => (
-  <button
-    type="button"
-    aria-label={ariaLabel}
-    onClick={async () => {
-      stopAuto();
-      await onClick();
-      if (!openId && !isReturningRef.current) startAuto();
-    }}
-    className="
-      group relative inline-flex items-center justify-center
-      h-10 w-10 md:h-12 md:w-12
-      rounded-full text-white
-      transition
-      focus:outline-none focus:ring-2 focus:ring-white/40
-    "
-    onPointerDown={onPointerDown}
-    onPointerUp={onPointerUp}
-  >
-    {/* spinning dotted ring on hover (no solid border behind it) */}
-    <span
+    <button
+      type="button"
+      aria-label={ariaLabel}
+      onClick={async () => {
+        stopAuto();
+        await onClick();
+        if (!openId && !isReturningRef.current) startAuto();
+      }}
       className="
-        pointer-events-none absolute inset-0 rounded-full
-        border-2 border-dashed border-white/70
-        opacity-0 group-hover:opacity-100
-        [animation:spin_1s_linear_infinite]
+        group relative inline-flex items-center justify-center
+        h-10 w-10 md:h-12 md:w-12
+        rounded-full text-white
+        transition
+        focus:outline-none focus:ring-2 focus:ring-white/40
       "
-      aria-hidden="true"
-    />
-    {/* icon only, no background/border */}
-    <span className="relative z-10 flex items-center justify-center">
-      {children}
-    </span>
-  </button>
-);
-
-
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+    >
+      {/* spinning dotted ring on hover */}
+      <span
+        className="
+          pointer-events-none absolute inset-0 rounded-full
+          border-2 border-dashed border-white/70
+          opacity-0 group-hover:opacity-100
+          [animation:spin_1s_linear_infinite]
+        "
+        aria-hidden="true"
+      />
+      <span className="relative z-10 flex items-center justify-center">
+        {children}
+      </span>
+    </button>
+  );
 
   return (
     <section className="relative py-16 bg-[#0a1a2f]">
-      {/* darkening overlay over navy */}
+      {/* Luxury backdrop: spotlight + overlay + vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_-10%,rgba(75,0,130,0.16),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(45%_45%_at_85%_20%,rgba(229,230,250,0.10),transparent_70%)]" />
       <div className="absolute inset-0 bg-black/50" />
+      <div className="pointer-events-none absolute inset-0 ring-1 ring-white/5 [box-shadow:inset_0_0_120px_rgba(0,0,0,0.55)]" />
 
       {/* content above overlay */}
       <div className="relative z-10">
-        {/* Heading & Tagline (centered, brand-light) */}
-        <div className="px-8 text-center">
+        {/* Heading & Tagline */}
+        <motion.div
+          variants={headerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.25 }}
+          className="px-8 text-center"
+        >
           <h2
             className="font-serif tracking-tight text-3xl sm:text-4xl md:text-5xl"
             style={{ color: BRAND_LIGHT }}
           >
             My Services
           </h2>
-          <p
-            className="mt-3 text-base sm:text-lg"
-            style={{ color: BRAND_LIGHT }}
-          >
+          <p className="mt-3 text-base sm:text-lg" style={{ color: BRAND_LIGHT }}>
             Redefining Journeys with Style, Comfort, and Excellence
           </p>
-        </div>
+          {/* Elegant divider */}
+          <div
+            className="mx-auto mt-5 h-[2px] w-40 rounded-full opacity-70"
+            style={{
+              background: `linear-gradient(90deg, transparent, ${BRAND_LIGHT}, transparent)`,
+            }}
+          />
+        </motion.div>
 
         {/* Carousel Controls (desktop) */}
         <div className="mt-6 hidden items-center justify-end gap-3 px-8 md:flex">
-          <ArrowButton
-            ariaLabel="Previous"
-            onClick={() => scrollByCard(-1)}
-          >
+          <ArrowButton ariaLabel="Previous" onClick={() => scrollByCard(-1)}>
             <ChevronLeft className="h-5 w-5" />
           </ArrowButton>
-
-          <ArrowButton
-            ariaLabel="Next"
-            onClick={() => scrollByCard(1)}
-          >
+          <ArrowButton ariaLabel="Next" onClick={() => scrollByCard(1)}>
             <ChevronRight className="h-5 w-5" />
           </ArrowButton>
         </div>
 
         {/* Carousel Track */}
-        <div className="mt-4 px-8">
+        <motion.div
+          variants={trackVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          className="mt-6 px-8"
+        >
           <div
             ref={trackRef}
             className="
@@ -402,15 +419,13 @@ export default function ServicesCarousel() {
                   <ServiceCard
                     {...s}
                     isOpen={isOpen}
-                    onToggle={() => {
-                      setOpenId((prev) => (prev === s.id ? null : s.id));
-                    }}
+                    onToggle={() => setOpenId((prev) => (prev === s.id ? null : s.id))}
                   />
                 </div>
               );
             })}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

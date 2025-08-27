@@ -7,6 +7,8 @@ import ServicesCarousel from "../Components/Users/Services.jsx";
 import WhyChooseUs from "../Components/Users/WhyChooseUs.jsx";
 import Fleet from "../Components/Users/fleet.jsx";
 import FAQ from "../Components/Users/FAQ.jsx";
+import Contact from "../Components/Users/contact.jsx";
+import Footer from "../Components/Users/Footer.jsx";
 
 export default function Home() {
   return (
@@ -24,6 +26,8 @@ export default function Home() {
         <WhyChooseUs/>
         <Fleet/>
         <FAQ/>
+        <Contact/>
+        <Footer/>
         {/* Later you can add Services, About, Fleet sections here */}
       </div>
     </div>
