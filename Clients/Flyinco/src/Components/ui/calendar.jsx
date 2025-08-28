@@ -10,7 +10,7 @@ function Calendar({
   className,
   classNames,
   showOutsideDays = true,
-  components: userComponents,
+  components: usercomponents,
   ...props
 }) {
   const defaultClassNames = {
@@ -48,7 +48,7 @@ function Calendar({
       : defaultClassNames[key],
   }), {});
 
-  const defaultComponents = {
+  const defaultcomponents = {
     Chevron: (props) => {
       if (props.orientation === "left") {
         return <ChevronLeft size={16} strokeWidth={2} {...props} aria-hidden="true" />;
@@ -57,9 +57,9 @@ function Calendar({
     },
   };
 
-  const mergedComponents = {
-    ...defaultComponents,
-    ...userComponents,
+  const mergedcomponents = {
+    ...defaultcomponents,
+    ...usercomponents,
   };
 
   return (
@@ -67,7 +67,7 @@ function Calendar({
       showOutsideDays={showOutsideDays}
       className={cn("w-fit", className)}
       classNames={mergedClassNames}
-      components={mergedComponents}
+      components={mergedcomponents}
       {...props} />
   );
 }
