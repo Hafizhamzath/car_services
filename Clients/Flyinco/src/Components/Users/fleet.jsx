@@ -1,3 +1,4 @@
+// src/components/Users/fleet.jsx
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -12,8 +13,7 @@ const vehicles = [
       "Seats up to five with a serene, commanding ride. Whisper-quiet cabin and bespoke materials throughout.",
     passengers: 5,
     luggage: 8,
-    imageBase:
-      "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
+    imageBase: "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
     alt: "Three-quarter front view of Rolls Royce Cullinan Black Badge in a dark studio",
   },
   {
@@ -23,8 +23,7 @@ const vehicles = [
       "Executive lounge comfort with extended legroom. Silky power and air suspension for tranquil cruising.",
     passengers: 4,
     luggage: 3,
-    imageBase:
-      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
+    imageBase: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
     alt: "Three-quarter front view of Mercedes Maybach S 580 at dusk",
   },
   {
@@ -34,8 +33,7 @@ const vehicles = [
       "Magic-carpet ride with extra rear space. Impeccable craftsmanship for VIP transfers.",
     passengers: 4,
     luggage: 3,
-    imageBase:
-      "https://images.unsplash.com/photo-1619767886558-efdc259cde1b",
+    imageBase: "https://images.unsplash.com/photo-1619767886558-efdc259cde1b",
     alt: "Rolls Royce Ghost Extended in moody lighting",
   },
   {
@@ -45,11 +43,10 @@ const vehicles = [
       "Grand-touring pace with a richly crafted cabin. Confident stance for city or highway.",
     passengers: 5,
     luggage: 5,
-    imageBase:
-      "https://images.unsplash.com/photo-1636971181094-8f7ef0a2ab44",
+    imageBase: "https://images.unsplash.com/photo-1636971181094-8f7ef0a2ab44",
     alt: "Bentley Bentayga with dramatic highlights",
   },
-  // add more cars here up to 10+
+  // add more cars here...
 ];
 
 function heroSrcSet(base) {
@@ -61,42 +58,43 @@ export default function Fleet() {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const selected = vehicles[selectedIndex];
 
-  // refs to keep thumbnails in view
   const stripRef = React.useRef(null);
   const thumbRefs = React.useRef([]);
+  const didMount = React.useRef(false);
 
-  const nextCar = () => {
-    setSelectedIndex((prev) => (prev + 1) % vehicles.length);
-  };
-  const prevCar = () => {
-    setSelectedIndex((prev) => (prev === 0 ? vehicles.length - 1 : prev - 1));
-  };
+  const nextCar = () => setSelectedIndex((p) => (p + 1) % vehicles.length);
+  const prevCar = () => setSelectedIndex((p) => (p === 0 ? vehicles.length - 1 : p - 1));
 
-  // Scroll the active thumbnail into view when selection changes
+  // ✅ Only scroll the thumbnail strip horizontally (no page jump)
   React.useEffect(() => {
+    const strip = stripRef.current;
     const el = thumbRefs.current[selectedIndex];
-    if (el && el.scrollIntoView) {
-      el.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    if (!strip || !el) return;
+
+    // skip the very first render to avoid any initial movement
+    if (!didMount.current) {
+      didMount.current = true;
+      return;
     }
+
+    const targetLeft = el.offsetLeft - (strip.clientWidth - el.clientWidth) / 2;
+    strip.scrollTo({ left: Math.max(0, targetLeft), behavior: "smooth" });
   }, [selectedIndex]);
 
   return (
-    <section className="w-full bg-black">
+    <section id="fleet" className="w-full bg-black">
       <div className="mx-auto max-w-7xl px-4 md:px-6 py-10 md:py-14">
-        {/* Header (centered) */}
+        {/* Header */}
         <header className="mb-8 md:mb-10 text-center">
-          <h1 className="text-3xl md:text-5xl font-semibold tracking-tight text-white">
-            Our Fleet
-          </h1>
+          <h1 className="text-3xl md:text-5xl font-semibold tracking-tight text-white">Our Fleet</h1>
           <p className="mt-2 max-w-2xl mx-auto text-base md:text-lg text-white/70">
-            Discover and book from our curated collection of luxury vehicles,
-            crafted for comfort, style, and distinction.
+            Discover and book from our curated collection of luxury vehicles, crafted for comfort, style, and distinction.
           </p>
         </header>
 
-        {/* GRID: Left = full image, Right = dark panel */}
+        {/* GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-12 overflow-hidden rounded-2xl border border-slate-800">
-          {/* LEFT: Hero image, full cover */}
+          {/* LEFT: hero image */}
           <div className="lg:col-span-7 relative min-h-[320px] md:min-h-[420px]">
             <AnimatePresence mode="wait">
               <motion.img
@@ -114,7 +112,7 @@ export default function Fleet() {
             </AnimatePresence>
           </div>
 
-          {/* RIGHT: Details panel only */}
+          {/* RIGHT: details */}
           <div className="lg:col-span-5 flex flex-col bg-slate-900 p-6 md:p-8">
             <AnimatePresence mode="wait">
               <motion.div
@@ -125,9 +123,7 @@ export default function Fleet() {
                 transition={{ duration: 0.35 }}
                 className="flex flex-col flex-1"
               >
-                <h2 className="text-xl md:text-2xl font-semibold text-white">
-                  {selected.name}
-                </h2>
+                <h2 className="text-xl md:text-2xl font-semibold text-white">{selected.name}</h2>
                 <p className="mt-3 text-white/80">{selected.description}</p>
 
                 <Separator className="my-6 bg-white/10" />
@@ -180,7 +176,6 @@ export default function Fleet() {
                       loading="lazy"
                     />
                   </div>
-                  {/* Only the name over image */}
                   <div className="absolute inset-x-0 bottom-0 p-2 bg-black/60 backdrop-blur-sm rounded-b-xl">
                     <div className="text-[13px] font-semibold text-white truncate">{v.name}</div>
                   </div>
@@ -189,7 +184,7 @@ export default function Fleet() {
             })}
           </div>
 
-          {/* Rectangular controls aligned to bottom-right */}
+          {/* Controls */}
           <div className="mt-3 flex justify-end gap-2">
             <button
               onClick={prevCar}
