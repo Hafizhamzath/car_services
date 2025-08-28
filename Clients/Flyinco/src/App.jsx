@@ -1,6 +1,7 @@
 // src/App.jsx
 import { Routes, Route } from "react-router-dom";
 import Home from "./Pages/Home.jsx";
+import BookingForm from "./Pages/BookNow.jsx";
 
 export default function App() {
   return (
@@ -11,7 +12,7 @@ export default function App() {
       <Route path="/about" element={<div>About page</div>} />
       <Route path="/fleet" element={<div>Fleet page</div>} />
       <Route path="/contact" element={<div>Contact page</div>} />
-      <Route path="/book" element={<div>Book Now page</div>} />
+      <Route path="/book" element={<BookingForm/>} />
     </Routes>
   );
 }

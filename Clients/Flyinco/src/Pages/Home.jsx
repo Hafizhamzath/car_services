@@ -1,14 +1,14 @@
 // src/pages/Home.jsx
 import React from "react";
-import Navbar from "../Components/Users/Navbar.jsx";
-import HeroSection from "../Components/Users/HeroSection.jsx";
+import Navbar from "../components/Users/Navbar.jsx";
+import HeroSection from "../components/Users/HeroSection.jsx";
 import heroImg from "../assets/HEro1.webp"; // ✅ adjust case/path correctly
-import ServicesCarousel from "../Components/Users/Services.jsx";
-import WhyChooseUs from "../Components/Users/WhyChooseUs.jsx";
-import Fleet from "../Components/Users/fleet.jsx";
-import FAQ from "../Components/Users/FAQ.jsx";
-import Contact from "../Components/Users/contact.jsx";
-import Footer from "../Components/Users/Footer.jsx";
+import ServicesCarousel from "../components/Users/Services.jsx";
+import WhyChooseUs from "../components/Users/WhyChooseUs.jsx";
+import Fleet from "../components/Users/fleet.jsx";
+import FAQ from "../components/Users/FAQ.jsx";
+import Contact from "../components/Users/contact.jsx";
+import Footer from "../components/Users/Footer.jsx";
 
 export default function Home() {
   return (
@@ -27,7 +27,7 @@ export default function Home() {
         <Fleet/>
         <FAQ/>
         <Contact/>
-        <Footer/>
+        <Footer variant="default" />
         {/* Later you can add Services, About, Fleet sections here */}
       </div>
     </div>
