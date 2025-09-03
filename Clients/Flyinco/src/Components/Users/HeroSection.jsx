@@ -1,6 +1,6 @@
 // src/components/HeroSection.jsx
 import React from "react";
-import heroImg from "../../assets/HEro1.webp"; // adjust name/case to match your file
+import heroImg from "../../assets/Cars/Header.png"; // adjust name/case to match your file
 
 export default function HeroSection() {
   return (

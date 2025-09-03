@@ -2,6 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { motion } from "framer-motion";
+import airportService from "../../assets/Cars/Airport service.jpg"
+import HotelTransfer from "../../assets/Cars/Hotel Transfer service.jpg"
+import ChaufferService from "../../assets/Cars/Chauffeur Services.jpg"
+import corporateTransport from "../../assets/Cars/Corporate transportation.jpg"
+import EventTransport from "../../assets/Cars/Event transportation.jpg"
+import GroupTransport from "../../assets/Cars/Group transportation.jpg"
 
 // ---- brand colors ----
 const BRAND_PRIMARY = "#4b0082";   // deep purple
@@ -13,7 +19,7 @@ const SERVICES = [
     id: "01",
     name: "Airport Services",
     slug: "/services/airport",
-    img: "/images/services/airport.jpg",
+    img: airportService,
     summary:
       "Command a flawless arrival with Flyinco. Your chauffeur tracks your flight, greets you the moment you land, and manages luggage with discreet precision. Enjoy a calm, private cabin and a seamless route to your destination—no queues, no delays, no stress. With a distinguished fleet and disciplined timing, your journey begins (or ends) exactly as it should: effortlessly, elegantly, on your schedule.",
   },
@@ -21,7 +27,7 @@ const SERVICES = [
     id: "02",
     name: "Hotel Transfer Services",
     slug: "/services/hotel-transfer",
-    img: "/images/services/hotel.jpg",
+    img: HotelTransfer,
     summary:
       "Glide between lobby and curbside with quiet efficiency. Your Flyinco chauffeur arrives precisely on time, assists with bags, and handles every detail behind the scenes. Settle into a refined interior, savor the stillness, and arrive composed. For departures, we coordinate with your concierge and confirm routes in advance. It’s the perfect blend of courtesy, discretion, and unshakable reliability.",
   },
@@ -29,7 +35,7 @@ const SERVICES = [
     id: "03",
     name: "Chauffeur Services",
     slug: "/services/chauffeur",
-    img: "/images/services/chauffeur.jpg",
+    img: ChaufferService,
     summary:
       "This is private travel perfected. Reserve by the hour or point-to-point and enjoy a dedicated Flyinco chauffeur who anticipates needs before you voice them. Doors opened, routes optimized, privacy protected. Sink into handcrafted comfort, charge devices, set the cabin mood, and let the city glide by. Precision, polish, and poise—every mile is intentionally elevated.",
   },
@@ -37,7 +43,7 @@ const SERVICES = [
     id: "04",
     name: "Corporate Transportation",
     slug: "/services/corporate",
-    img: "/images/services/corporate.jpg",
+    img: corporateTransport,
     summary:
       "Move like leadership. Flyinco delivers executive transfers, roadshows, and VIP movements with immaculate timing and airtight coordination. Quiet cabins for calls, consistent etiquette, and professional discretion are standard. Expect streamlined scheduling, centralized billing, and a single point of contact. We keep your agenda in motion so you arrive focused, prepared, and perfectly on time.",
   },
@@ -45,7 +51,7 @@ const SERVICES = [
     id: "05",
     name: "Event Transportation",
     slug: "/services/event",
-    img: "/images/services/event.jpg",
+    img: EventTransport,
     summary:
       "Make an entrance—then make it look effortless. From weddings and galas to conferences and premieres, Flyinco orchestrates vehicles, call times, and routes with backstage precision. Guests are met, seated, and delivered right on cue in impeccably presented cars. Every touchpoint feels considered, every transition feels smooth. Elegant, visible quality; invisible logistics.",
   },
@@ -53,7 +59,7 @@ const SERVICES = [
     id: "06",
     name: "Group Transportation",
     slug: "/services/group",
-    img: "/images/services/group.jpg",
+    img: GroupTransport,
     summary:
       "Travel together without compromise. Our premium vans and minibuses offer generous space, refined interiors, and serene ride quality, while Flyinco coordinates multi-stop itineraries and staggered departures in real time. Colleagues, family, or VIP guests arrive rested and aligned. It’s group movement with a private-jet mindset—cohesive, punctual, and unmistakably luxurious.",
   },

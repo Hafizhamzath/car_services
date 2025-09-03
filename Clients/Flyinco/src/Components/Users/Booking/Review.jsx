@@ -29,16 +29,19 @@ export default function Review({
             <p className="text-white/80 font-medium">Your Details</p>
             <Button
               size="sm"
-              variant="outline"
-              className="border-white/30 text-white hover:bg-white/10"
+              type="button"
               onClick={() => onEdit("guest")}
+              className="border border-white/30 bg-white text-black hover:bg-[#4b0082] hover:text-white"
             >
               <Pencil className="w-4 h-4 mr-1" /> Edit
             </Button>
           </div>
           <ul className="text-white/80 text-sm space-y-1">
             <li>
-              Name: <span className="text-white">{data.firstName} {data.lastName}</span>
+              Name:{" "}
+              <span className="text-white">
+                {data.firstName} {data.lastName}
+              </span>
             </li>
             <li>
               Email: <span className="text-white">{data.email}</span>
@@ -46,7 +49,7 @@ export default function Review({
             <li>
               Phone:{" "}
               <span className="text-white">
-                {selectedCountry.flag} {data.countryCode} {data.contactNumber}
+                {data.countryCode} {data.contactNumber}
               </span>
             </li>
           </ul>
@@ -58,9 +61,9 @@ export default function Review({
             <p className="text-white/80 font-medium">Trip Details</p>
             <Button
               size="sm"
-              variant="outline"
-              className="border-white/30 text-white hover:bg-white/10"
+              type="button"
               onClick={() => onEdit("trip")}
+              className="border border-white/30 bg-white text-black hover:bg-[#4b0082] hover:text-white"
             >
               <Pencil className="w-4 h-4 mr-1" /> Edit
             </Button>
@@ -75,10 +78,12 @@ export default function Review({
             {isAirport && (
               <>
                 <li>
-                  Airport Trip: <span className="text-white capitalize">{data.tripType}</span>
+                  Airport Trip:{" "}
+                  <span className="text-white capitalize">{data.tripType}</span>
                 </li>
                 <li>
-                  Flight No.: <span className="text-white">{data.flightNumber}</span>
+                  Flight No.:{" "}
+                  <span className="text-white">{data.flightNumber}</span>
                 </li>
               </>
             )}
@@ -89,11 +94,16 @@ export default function Review({
               Drop: <span className="text-white">{data.dropLocation}</span>
             </li>
             <li>
-              Date & Time:{" "}
+              Pickup Date & Time:{" "}
               <span className="text-white">
-                {data.date || "-"} {data.time || ""}
+                {data.pickupDate || "-"} {data.pickupTime || ""}
               </span>
             </li>
+            {data.dropDate && (
+              <li>
+                Drop Date: <span className="text-white">{data.dropDate}</span>
+              </li>
+            )}
           </ul>
         </div>
 
@@ -103,19 +113,21 @@ export default function Review({
             <p className="text-white/80 font-medium">Guests & Luggage</p>
             <Button
               size="sm"
-              variant="outline"
-              className="border-white/30 text-white hover:bg-white/10"
+              type="button"
               onClick={() => onEdit("party")}
+              className="border border-white/30 bg-white text-black hover:bg-[#4b0082] hover:text-white"
             >
               <Pencil className="w-4 h-4 mr-1" /> Edit
             </Button>
           </div>
           <ul className="text-white/80 text-sm space-y-1">
             <li>
-              Passengers: <span className="text-white">{data.passengers || "-"}</span>
+              Passengers:{" "}
+              <span className="text-white">{data.passengers || "-"}</span>
             </li>
             <li>
-              Luggage: <span className="text-white">{data.luggage || "-"}</span>
+              Luggage:{" "}
+              <span className="text-white">{data.luggage || "-"}</span>
             </li>
           </ul>
         </div>
@@ -126,9 +138,9 @@ export default function Review({
             <p className="text-white/80 font-medium">Vehicle</p>
             <Button
               size="sm"
-              variant="outline"
-              className="border-white/30 text-white hover:bg-white/10"
+              type="button"
               onClick={() => onEdit("vehicle")}
+              className="border border-white/30 bg-white text-black hover:bg-[#4b0082] hover:text-white"
             >
               <Pencil className="w-4 h-4 mr-1" /> Edit
             </Button>
@@ -157,9 +169,9 @@ export default function Review({
             <p className="text-white/80 font-medium">Enhancements</p>
             <Button
               size="sm"
-              variant="outline"
-              className="border-white/30 text-white hover:bg-white/10"
+              type="button"
               onClick={() => onEdit("extras")}
+              className="border border-white/30 bg-white text-black hover:bg-[#4b0082] hover:text-white"
             >
               <Pencil className="w-4 h-4 mr-1" /> Edit
             </Button>
@@ -187,15 +199,20 @@ export default function Review({
         {/* Confirm */}
         <div className="flex items-center justify-end gap-3">
           <Button
-            variant="outline"
-            className="border-white/30 text-white hover:bg-white/10"
+            type="button"
             onClick={() => onEdit("guest")}
+            className="border border-white/30 bg-white text-black hover:bg-[#4b0082] hover:text-white"
           >
             Make Changes
           </Button>
           <Button
-            className="bg-white text-black hover:bg-white/90"
-            onClick={onConfirm}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onConfirm();
+            }}
+            className="bg-white text-black hover:bg-[#4b0082] hover:text-white"
           >
             Confirm Booking
           </Button>

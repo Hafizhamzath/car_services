@@ -9,7 +9,6 @@ import { validateBooking } from "./Booking/Validation";
 
 import PersonalDetails from "./Booking/PersonalDetails";
 import TripDetails from "./Booking/TripDetails";
-
 import VehicleSection from "./Booking/VehicleSection";
 import Enhancements from "./Booking/Enhancement";
 import Review from "./Booking/Review";
@@ -38,8 +37,10 @@ export default function BookingForm() {
     flightNumber: "",
     pickupLocation: "",
     dropLocation: "",
-    date: "",
-    time: "",
+    pickupDate: "",   // ✅ renamed
+    pickupTime: "",   // ✅ renamed
+    dropDate: "",     // ✅ added
+    stops: [],        // ✅ added
 
     // party
     passengers: "",
@@ -57,10 +58,12 @@ export default function BookingForm() {
   const isAirport = data.service === "airport";
   const [errors, setErrors] = useState({});
   const [showReview, setShowReview] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   function update(field, value) {
     setData((d) => {
-      if (field === "vehicle") return { ...d, vehicle: value, vehicleModel: "none" };
+      if (field === "vehicle")
+        return { ...d, vehicle: value, vehicleModel: "none" };
       return { ...d, [field]: value };
     });
   }
@@ -68,14 +71,29 @@ export default function BookingForm() {
   function toggleAddon(value) {
     setData((d) => {
       const exists = d.addons.includes(value);
-      return { ...d, addons: exists ? d.addons.filter((v) => v !== value) : [...d.addons, value] };
+      return {
+        ...d,
+        addons: exists
+          ? d.addons.filter((v) => v !== value)
+          : [...d.addons, value],
+      };
     });
   }
 
   const completion = useMemo(() => {
     const required = [
-      "firstName","lastName","email","contactNumber","service",
-      "pickupLocation","dropLocation","date","time","passengers","luggage","vehicle",
+      "firstName",
+      "lastName",
+      "email",
+      "contactNumber",
+      "service",
+      "pickupLocation",
+      "dropLocation",
+      "pickupDate",   // ✅ updated
+      "pickupTime",   // ✅ updated
+      "passengers",
+      "luggage",
+      "vehicle",
     ];
     const extraAirport = isAirport ? ["tripType", "flightNumber"] : [];
     const all = [...required, ...extraAirport];
@@ -106,10 +124,20 @@ export default function BookingForm() {
     if (Object.keys(v).length > 0) {
       setShowReview(false);
       const keyToSection = {
-        firstName: "guest", lastName: "guest", email: "guest", contactNumber: "guest",
-        service: "trip", tripType: "trip", flightNumber: "trip",
-        pickupLocation: "trip", dropLocation: "trip", date: "trip", time: "trip",
-        passengers: "party", luggage: "party", vehicle: "vehicle",
+        firstName: "guest",
+        lastName: "guest",
+        email: "guest",
+        contactNumber: "guest",
+        service: "trip",
+        tripType: "trip",
+        flightNumber: "trip",
+        pickupLocation: "trip",
+        dropLocation: "trip",
+        pickupDate: "trip",   // ✅ updated
+        pickupTime: "trip",   // ✅ updated
+        passengers: "party",
+        luggage: "party",
+        vehicle: "vehicle",
       };
       const firstErrKey = Object.keys(v)[0];
       scrollTo(keyToSection[firstErrKey] || "guest");
@@ -131,8 +159,10 @@ export default function BookingForm() {
       flightNumber: "",
       pickupLocation: "",
       dropLocation: "",
-      date: "",
-      time: "",
+      pickupDate: "",   // ✅ updated
+      pickupTime: "",   // ✅ updated
+      dropDate: "",     // ✅ added
+      stops: [],        // ✅ added
       passengers: "",
       luggage: "",
       vehicle: "",
@@ -142,6 +172,17 @@ export default function BookingForm() {
     });
     setErrors({});
     setShowReview(false);
+  }
+
+  // 🔥 Fake submit handler (no API yet)
+  function handleFinalSubmit() {
+    setSubmitting(true);
+
+    setTimeout(() => {
+      alert("✅ Booking submitted successfully!");
+      resetAll();
+      setSubmitting(false);
+    }, 1500); // simulate network delay
   }
 
   const selectedCountry =
@@ -160,13 +201,14 @@ export default function BookingForm() {
             </h1>
           </div>
 
-          {/* Colorful animated progress */}
+          {/* Progress Bar */}
           <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden mb-6">
             <div
               className="h-full rounded-full transition-all duration-500 ease-out animate-pulse"
               style={{
                 width: `${progressWidth}%`,
-                background: "linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6, #f59e0b)",
+                background:
+                  "linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6, #f59e0b)",
               }}
               aria-label="completion-progress"
             />
@@ -212,22 +254,21 @@ export default function BookingForm() {
 
             {/* Actions */}
             <div className="flex items-center justify-end gap-3 pt-2">
-  <Button
-    type="button"
-    variant="outline"
-    onClick={resetAll}
-    className="border-white/30 text-black hover:bg-[#4b0082]"
-  >
-    Reset
-  </Button>
-  <Button
-    type="submit"
-    className="bg-white text-black hover:bg-[#4b0082] hover:text-white"
-  >
-    Review & Confirm
-  </Button>
-</div>
-
+              <Button
+                type="button"
+                variant="outline"
+                onClick={resetAll}
+                className="border-white/30 text-black hover:bg-[#4b0082]"
+              >
+                Reset
+              </Button>
+              <Button
+                type="submit"
+                className="bg-white text-black hover:bg-[#4b0082] hover:text-white"
+              >
+                Review & Confirm
+              </Button>
+            </div>
           </form>
 
           {/* Inline Review */}
@@ -240,8 +281,12 @@ export default function BookingForm() {
               selectedCountry={selectedCountry}
               selectedVehicleObj={selectedVehicleObj}
               onEdit={(section) => scrollTo(section)}
-              onConfirm={() => alert("✅ Booking details confirmed! (handle submit here)")}
+              onConfirm={handleFinalSubmit} // now submits
             />
+          )}
+
+          {submitting && (
+            <p className="text-sm text-white/70 mt-4">Submitting...</p>
           )}
         </CardContent>
       </Card>

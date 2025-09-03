@@ -4,49 +4,108 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Users, Luggage, ChevronLeft, ChevronRight } from "lucide-react";
+import yukon from "../../assets/Cars/yukon.jpeg"
+import  tahoe from "../../assets/Cars/Cheverolet tahoe.jpg"
+import  Taurus from "../../assets/Cars/Ford Taurus.jpg"
+import Territory from "../../assets/Cars/Ford Territory.jpg"
+import bus from "../../assets/Cars/Mercedees bus.jpg"
+import S_class from "../../assets/Cars/Mercedees S class front.jpg"
+import sprinter from "../../assets/Cars/Mercedees sprinter.jpg"
+import vito from "../../assets/Cars/Mercedees Vito 9.jpg"
+import Bmw from "../../assets/Cars/BMW 7.jpg"
+
 
 const vehicles = [
   {
-    id: "rr-cullinan-bb",
-    name: "Rolls Royce Cullinan Black Badge",
+    id: "gmc-yukon",
+    name: "GMC Yukon",
     description:
-      "Seats up to five with a serene, commanding ride. Whisper-quiet cabin and bespoke materials throughout.",
-    passengers: 5,
-    luggage: 8,
-    imageBase: "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
-    alt: "Three-quarter front view of Rolls Royce Cullinan Black Badge in a dark studio",
+      "Full-size premium SUV with spacious seating and modern amenities. Perfect for group or family transfers.",
+    passengers: 7,
+    luggage: 6,
+    imageBase: yukon,
+    alt: "Front angle view of GMC Yukon parked outdoors",
   },
   {
-    id: "mb-s580-maybach",
-    name: "Mercedes-Benz Maybach S 580",
+    id: "chevrolet-tahoe",
+    name: "Chevrolet Tahoe",
     description:
-      "Executive lounge comfort with extended legroom. Silky power and air suspension for tranquil cruising.",
+      "A versatile SUV with ample space, comfort, and reliable performance for city or long trips.",
+    passengers: 7,
+    luggage: 6,
+    imageBase: tahoe,
+    alt: "Chevrolet Tahoe in a scenic background",
+  },
+  {
+    id: "ford-taurus",
+    name: "Ford Taurus",
+    description:
+      "Business-class sedan offering a smooth ride, roomy interior, and advanced safety features.",
     passengers: 4,
     luggage: 3,
-    imageBase: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
-    alt: "Three-quarter front view of Mercedes Maybach S 580 at dusk",
+    imageBase: Taurus,
+    alt: "Ford Taurus sedan in daylight",
   },
   {
-    id: "rr-ghost-e",
-    name: "Rolls Royce Ghost Extended",
+    id: "ford-territory",
+    name: "Ford Territory",
     description:
-      "Magic-carpet ride with extra rear space. Impeccable craftsmanship for VIP transfers.",
+      "Mid-size SUV with comfort, space, and smart technology. Ideal for urban and intercity travel.",
+    passengers: 4,
+    luggage: 4,
+    imageBase: Territory,
+    alt: "Ford Territory SUV parked near modern buildings",
+  },
+  {
+    id: "bmw-7-series",
+    name: "BMW 7 Series",
+    description:
+      "Luxury sedan with executive-class features, elegant interiors, and refined performance.",
     passengers: 4,
     luggage: 3,
-    imageBase: "https://images.unsplash.com/photo-1619767886558-efdc259cde1b",
-    alt: "Rolls Royce Ghost Extended in moody lighting",
+    imageBase: Bmw,
+    alt: "BMW 7 Series luxury sedan at night",
   },
   {
-    id: "bentley-bentayga",
-    name: "Bentley Bentayga Speed",
+    id: "mercedes-s-class",
+    name: "Mercedes-Benz S-Class",
     description:
-      "Grand-touring pace with a richly crafted cabin. Confident stance for city or highway.",
-    passengers: 5,
-    luggage: 5,
-    imageBase: "https://images.unsplash.com/photo-1636971181094-8f7ef0a2ab44",
-    alt: "Bentley Bentayga with dramatic highlights",
+      "Flagship luxury sedan with cutting-edge technology, comfort, and unmatched prestige.",
+    passengers: 4,
+    luggage: 3,
+    imageBase: S_class,
+    alt: "Mercedes-Benz S-Class parked elegantly",
   },
-  // add more cars here...
+  {
+    id: "mercedes-vito",
+    name: "Mercedes-Benz Vito",
+    description:
+      "Premium MPV offering spacious seating, smooth ride, and practical flexibility for group travel.",
+    passengers: 7,
+    luggage: 7,
+    imageBase: vito,
+    alt: "Mercedes Vito van parked on roadside",
+  },
+  {
+    id: "mercedes-sprinter",
+    name: "Mercedes-Benz Sprinter",
+    description:
+      "Luxury van with configurable seating layouts, ideal for business groups and long journeys.",
+    passengers: 15,
+    luggage: 10,
+    imageBase: sprinter,
+    alt: "Mercedes Sprinter van in open area",
+  },
+  {
+    id: "mercedes-bus",
+    name: "Mercedes Multi Axle Bus",
+    description:
+      "Executive-class coach with premium comfort, recliner seating, and large capacity for group transfers.",
+    passengers: 48,
+    luggage: 40,
+    imageBase: bus,
+    alt: "Mercedes multi-axle bus on highway",
+  },
 ];
 
 function heroSrcSet(base) {
@@ -65,13 +124,11 @@ export default function Fleet() {
   const nextCar = () => setSelectedIndex((p) => (p + 1) % vehicles.length);
   const prevCar = () => setSelectedIndex((p) => (p === 0 ? vehicles.length - 1 : p - 1));
 
-  // ✅ Only scroll the thumbnail strip horizontally (no page jump)
   React.useEffect(() => {
     const strip = stripRef.current;
     const el = thumbRefs.current[selectedIndex];
     if (!strip || !el) return;
 
-    // skip the very first render to avoid any initial movement
     if (!didMount.current) {
       didMount.current = true;
       return;
@@ -154,7 +211,7 @@ export default function Fleet() {
           {/* Thumbnail strip */}
           <div
             ref={stripRef}
-            className="flex gap-2 md:gap-3 overflow-x-auto scroll-smooth snap-x snap-mandatory pr-1"
+            className="flex gap-2 md:gap-3 overflow-hidden snap-x snap-mandatory pr-1"
           >
             {vehicles.map((v, idx) => {
               const active = idx === selectedIndex;

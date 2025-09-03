@@ -9,7 +9,7 @@ import {
   ChevronDown,
   CheckCircle2,
 } from "lucide-react";
-import heroImg from "../../assets/HEro1.webp"; // ✅ ensure path/case is correct
+import heroImg from "../../assets/Cars/footer.png"; // ✅ ensure path/case is correct
 
 const BRAND_PRIMARY = "#4b0082"; // deep purple
 const BRAND_LIGHT = "#e5e6fa";   // light lavender
