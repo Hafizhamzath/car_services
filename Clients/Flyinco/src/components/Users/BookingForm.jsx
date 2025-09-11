@@ -6,6 +6,7 @@ import { ClipboardList } from "lucide-react";
 
 import { COUNTRY_CODES, SERVICES, VEHICLES, ADDONS } from "./Booking/Constants";
 import { validateBooking } from "./Booking/Validation";
+import api from "../../lib/api"; // ✅ axios instance
 
 import PersonalDetails from "./Booking/PersonalDetails";
 import TripDetails from "./Booking/TripDetails";
@@ -37,10 +38,10 @@ export default function BookingForm() {
     flightNumber: "",
     pickupLocation: "",
     dropLocation: "",
-    pickupDate: "",   // ✅ renamed
-    pickupTime: "",   // ✅ renamed
-    dropDate: "",     // ✅ added
-    stops: [],        // ✅ added
+    pickupDate: "",
+    pickupTime: "",
+    dropDate: "",
+    stops: [],
 
     // party
     passengers: "",
@@ -62,8 +63,7 @@ export default function BookingForm() {
 
   function update(field, value) {
     setData((d) => {
-      if (field === "vehicle")
-        return { ...d, vehicle: value, vehicleModel: "none" };
+      if (field === "vehicle") return { ...d, vehicle: value, vehicleModel: "none" };
       return { ...d, [field]: value };
     });
   }
@@ -73,9 +73,7 @@ export default function BookingForm() {
       const exists = d.addons.includes(value);
       return {
         ...d,
-        addons: exists
-          ? d.addons.filter((v) => v !== value)
-          : [...d.addons, value],
+        addons: exists ? d.addons.filter((v) => v !== value) : [...d.addons, value],
       };
     });
   }
@@ -89,8 +87,8 @@ export default function BookingForm() {
       "service",
       "pickupLocation",
       "dropLocation",
-      "pickupDate",   // ✅ updated
-      "pickupTime",   // ✅ updated
+      "pickupDate",
+      "pickupTime",
       "passengers",
       "luggage",
       "vehicle",
@@ -133,8 +131,8 @@ export default function BookingForm() {
         flightNumber: "trip",
         pickupLocation: "trip",
         dropLocation: "trip",
-        pickupDate: "trip",   // ✅ updated
-        pickupTime: "trip",   // ✅ updated
+        pickupDate: "trip",
+        pickupTime: "trip",
         passengers: "party",
         luggage: "party",
         vehicle: "vehicle",
@@ -159,10 +157,10 @@ export default function BookingForm() {
       flightNumber: "",
       pickupLocation: "",
       dropLocation: "",
-      pickupDate: "",   // ✅ updated
-      pickupTime: "",   // ✅ updated
-      dropDate: "",     // ✅ added
-      stops: [],        // ✅ added
+      pickupDate: "",
+      pickupTime: "",
+      dropDate: "",
+      stops: [],
       passengers: "",
       luggage: "",
       vehicle: "",
@@ -174,15 +172,23 @@ export default function BookingForm() {
     setShowReview(false);
   }
 
-  // 🔥 Fake submit handler (no API yet)
-  function handleFinalSubmit() {
+  // ✅ Real API submit
+  async function handleFinalSubmit() {
     setSubmitting(true);
+    try {
+      const res = await api.post("/bookings", data);
 
-    setTimeout(() => {
       alert("✅ Booking submitted successfully!");
+      console.log("Saved booking:", res.data);
+
       resetAll();
+      setShowReview(false);
+    } catch (err) {
+      console.error(err);
+      alert("❌ Failed to submit booking: " + (err.response?.data?.message || err.message));
+    } finally {
       setSubmitting(false);
-    }, 1500); // simulate network delay
+    }
   }
 
   const selectedCountry =
@@ -281,7 +287,7 @@ export default function BookingForm() {
               selectedCountry={selectedCountry}
               selectedVehicleObj={selectedVehicleObj}
               onEdit={(section) => scrollTo(section)}
-              onConfirm={handleFinalSubmit} // now submits
+              onConfirm={handleFinalSubmit} // ✅ now real API call
             />
           )}
 

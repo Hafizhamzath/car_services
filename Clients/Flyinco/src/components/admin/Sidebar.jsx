@@ -22,39 +22,48 @@ export default function Sidebar({ collapsed, setCollapsed }) {
   const location = useLocation();
   const [isRTL, setIsRTL] = useState(false);
 
-  // detect current document direction
+  // Track <html dir> and react to changes (for live language toggles)
   useEffect(() => {
-    setIsRTL(document.documentElement.dir === "rtl");
+    const el = document.documentElement;
+    const update = () => setIsRTL(el.dir === "rtl");
+    update();
+
+    // If you toggle dir at runtime, observe attribute changes
+    const obs = new MutationObserver(update);
+    obs.observe(el, { attributes: true, attributeFilter: ["dir"] });
+    return () => obs.disconnect();
   }, []);
+
+  // Logical offsets for the floating toggle button
+  const expandedOffset = collapsed ? (isRTL ? "right-[72px]" : "left-[72px]") 
+                                   : (isRTL ? "right-[248px]" : "left-[248px]");
 
   return (
     <aside
       className={cn(
-        "bg-gray-900 text-white h-screen flex flex-col transition-all duration-300 fixed top-0 left-0 z-40",
+        "bg-gray-900 text-white h-screen flex flex-col transition-all duration-300 fixed top-0 z-40",
+        isRTL ? "right-0" : "left-0",
         collapsed ? "w-20" : "w-64"
       )}
     >
-      {/* Top bar with title */}
+      {/* Top bar */}
       <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700">
         {!collapsed && <span className="font-bold text-lg">Dashboard</span>}
       </div>
 
-      {/* Collapse/Expand button (kept above Topbar, fixed positioning) */}
+      {/* Collapse/Expand button (floats near the edge of the sidebar) */}
       <button
         onClick={() => setCollapsed(!collapsed)}
         className={cn(
           "fixed top-5 bg-gray-800 text-white p-1 rounded-full shadow hover:bg-gray-700 transition z-50",
-          isRTL ? "left-[72px]" : "left-[248px]", // adjust positions
-          collapsed && (isRTL ? "left-[16px]" : "left-[72px]")
+          expandedOffset
         )}
+        aria-label="Toggle sidebar"
       >
+        {/* Choose icon directionally + collapsed state */}
         {collapsed
-          ? isRTL
-            ? <PanelLeftClose size={18} />
-            : <PanelRightClose size={18} />
-          : isRTL
-          ? <PanelRightClose size={18} />
-          : <PanelLeftClose size={18} />}
+          ? (isRTL ? <PanelRightClose size={18} /> : <PanelLeftClose size={18} />)
+          : (isRTL ? <PanelLeftClose size={18} /> : <PanelRightClose size={18} />)}
       </button>
 
       {/* Nav links */}
@@ -76,7 +85,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
               <span
                 className={cn(
                   "absolute top-1/2 -translate-y-1/2 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-lg opacity-0 group-hover:opacity-100 transition whitespace-nowrap",
-                  isRTL ? "right-full -mr-3" : "left-full ml-3"
+                  isRTL ? "left-full ml-3" : "right-full -mr-3"
                 )}
               >
                 {name}
@@ -86,7 +95,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         ))}
       </div>
 
-      {/* Logout pinned at bottom */}
+      {/* Logout */}
       <div className="p-3 border-t border-gray-700">
         <button
           onClick={() => console.log("Logout")}
@@ -95,12 +104,11 @@ export default function Sidebar({ collapsed, setCollapsed }) {
           <LogOut size={20} />
           {!collapsed && <span>Logout</span>}
 
-          {/* Tooltip for logout when collapsed */}
           {collapsed && (
             <span
               className={cn(
                 "absolute top-1/2 -translate-y-1/2 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-lg opacity-0 group-hover:opacity-100 transition whitespace-nowrap",
-                isRTL ? "right-full -mr-3" : "left-full ml-3"
+                isRTL ? "left-full ml-3" : "right-full -mr-3"
               )}
             >
               Logout

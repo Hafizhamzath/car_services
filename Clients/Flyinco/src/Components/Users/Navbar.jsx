@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
-import { Link, NavLink } from "react-router-dom";
+import { Menu, X, User, LogOut } from "lucide-react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import logo from "../../assets/Flyinco White Logo.png";
 
@@ -13,7 +19,7 @@ const leftLinks = [
 ];
 const rightLinks = [
   { label: "Fleet", to: "/fleet" },
-  { label: "Contact", to: "/contact" }, // ✅ Replaced Login → Contact
+  { label: "Contact", to: "/contact" },
 ];
 
 // desktop link styling
@@ -26,6 +32,8 @@ function linkClasses(isActive) {
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -33,6 +41,19 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("userInfo");
+    if (storedUser) {
+      setUserInfo(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    setUserInfo(null);
+    navigate("/");
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full">
@@ -84,17 +105,54 @@ export default function Navbar() {
                 </li>
               ))}
             </ul>
-            {/* ✅ Login button with #4b0082 bg */}
-            <Button
-              asChild
-              size="sm"
-              className="rounded-full px-5 text-white"
-              style={{ backgroundColor: "#4b0082" }}
-            >
-              <Link to="/login" aria-label="Login">
-                Login
-              </Link>
-            </Button>
+
+            {/* ✅ Auth Section */}
+            {userInfo ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    size="sm"
+                    className="rounded-full px-5 text-white"
+                    style={{ backgroundColor: "#4b0082" }}
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    {userInfo.name?.split(" ")[0] || "Profile"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-44 bg-black/60 backdrop-blur-md border border-white/20 text-white"
+                >
+                  <DropdownMenuItem
+                    asChild
+                    className="text-white data-[highlighted]:bg-[#4b0082] data-[highlighted]:text-white"
+                  >
+                    <Link to="/profile" className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 text-white data-[highlighted]:bg-red-600 data-[highlighted]:text-white"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button
+                asChild
+                size="sm"
+                className="rounded-full px-5 text-white"
+                style={{ backgroundColor: "#4b0082" }}
+              >
+                <Link to="/login" aria-label="Login">
+                  Login
+                </Link>
+              </Button>
+            )}
           </div>
 
           {/* Mobile (logo + hamburger) */}
@@ -113,7 +171,7 @@ export default function Navbar() {
             </Link>
 
             {/* Mobile menu */}
-            <MobileMenu />
+            <MobileMenu userInfo={userInfo} handleLogout={handleLogout} />
           </div>
         </nav>
       </div>
@@ -121,7 +179,7 @@ export default function Navbar() {
   );
 }
 
-function MobileMenu() {
+function MobileMenu({ userInfo, handleLogout }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -160,17 +218,43 @@ function MobileMenu() {
               </NavLink>
             ))}
 
-            {/* ✅ Login button in mobile with #4b0082 bg */}
-            <Button
-              asChild
-              className="mt-4 w-full rounded-full text-base py-3 text-white"
-              style={{ backgroundColor: "#4b0082" }}
-              onClick={() => setOpen(false)}
-            >
-              <Link to="/login" aria-label="Login">
-                Login
-              </Link>
-            </Button>
+            {/* ✅ Auth section (mobile) */}
+            {userInfo ? (
+              <div className="flex flex-col gap-2 mt-4">
+                <Button
+                  asChild
+                  className="w-full rounded-full text-base py-3 text-white"
+                  style={{ backgroundColor: "#4b0082" }}
+                  onClick={() => setOpen(false)}
+                >
+                  <Link to="/profile" className="flex items-center gap-2">
+                    <User className="h-5 w-5" />
+                    Profile
+                  </Link>
+                </Button>
+                <Button
+                  onClick={() => {
+                    handleLogout();
+                    setOpen(false);
+                  }}
+                  className="w-full rounded-full text-base py-3 bg-red-600 text-white flex items-center gap-2 hover:bg-red-700"
+                >
+                  <LogOut className="h-5 w-5" />
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <Button
+                asChild
+                className="mt-4 w-full rounded-full text-base py-3 text-white"
+                style={{ backgroundColor: "#4b0082" }}
+                onClick={() => setOpen(false)}
+              >
+                <Link to="/login" aria-label="Login">
+                  Login
+                </Link>
+              </Button>
+            )}
           </nav>
         </div>
       )}

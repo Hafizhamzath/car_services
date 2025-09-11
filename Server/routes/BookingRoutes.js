@@ -1,21 +1,34 @@
-// routes/bookingRoutes.js
 import express from "express";
 import {
   createBooking,
-  getBookings,
+  getAllBookings,
+  getBookings as getUserBookings, // alias import
   getBookingById,
   deleteBooking,
+  updateBooking,
+  adminDeleteBooking,
+  assignDriver, // ✅ import assign controller
 } from "../controllers/bookingController.js";
-import { protect } from "../middleware/authMiddleware.js";
+
+import { protect, admin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.route("/")
-  .get(protect, getBookings)
-  .post(protect, createBooking);
+// ----------------- USER ROUTES -----------------
+router.route("/my").get(protect, getUserBookings); // Logged-in user’s own bookings
+router.route("/").post(protect, createBooking); // Create booking
 
-router.route("/:id")
-  .get(protect, getBookingById)
-  .delete(protect, deleteBooking);
+// ----------------- ADMIN ROUTES -----------------
+router.route("/").get(protect, admin, getAllBookings); // View all bookings
+router
+  .route("/:id")
+  .put(protect, admin, updateBooking) // Admin: edit any booking
+  .delete(protect, admin, adminDeleteBooking); // ✅ fix: admin deletes booking
+
+// ✅ Assign driver route
+router.put("/:id/assign", protect, admin, assignDriver);
+
+// ----------------- SHARED ROUTE -----------------
+router.route("/:id").get(protect, getBookingById); // Both admin & user
 
 export default router;

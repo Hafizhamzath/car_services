@@ -4,19 +4,32 @@ import logo from "../../assets/Flyinco.png";
 import { Button } from "@/components/ui/button";
 import { Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import NotificationBell from "../../components/admin/Notification";
 
 export default function Topbar() {
   const [theme, setTheme] = useState("light");
   const [language, setLanguage] = useState("en");
+  const dir = language === "ar" ? "rtl" : "ltr";
 
-  // 🔑 Update HTML dir attribute when language changes
   useEffect(() => {
-    if (language === "ar") {
-      document.documentElement.setAttribute("dir", "rtl");
-    } else {
-      document.documentElement.setAttribute("dir", "ltr");
-    }
-  }, [language]);
+    document.documentElement.setAttribute("dir", dir);
+  }, [dir]);
+
+  // sample data
+  const [notifications, setNotifications] = useState([
+    { id: "1", title: "New booking created", message: "PNR #1024 by Sarah W.", time: "2m ago", type: "info", read: false },
+    { id: "2", title: "Driver approved", message: "Alex Johnson is now active", time: "15m ago", type: "success", read: false },
+    { id: "3", title: "Payment failed", message: "Booking #1018", time: "1h ago", type: "warning", read: true },
+  ]);
+
+  const handleItemClick = (item) => {
+    // e.g., navigate(`/admin/bookings/${item.id}`)
+    setNotifications(prev => prev.map(n => n.id === item.id ? { ...n, read: true } : n));
+  };
+
+  const handleMarkAllRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
 
   return (
     <header className="flex justify-between items-center px-6 py-4 bg-white shadow-md">
@@ -27,6 +40,14 @@ export default function Topbar() {
 
       {/* Right side */}
       <div className="flex items-center gap-6">
+        {/* Notifications (shadcn) */}
+        <NotificationBell
+          items={notifications}
+          onItemClick={handleItemClick}
+          onMarkAllRead={handleMarkAllRead}
+          dir={dir}
+        />
+
         {/* Theme Toggle */}
         <button
           onClick={() => setTheme(theme === "light" ? "dark" : "light")}
@@ -40,7 +61,6 @@ export default function Topbar() {
 
         {/* Language Toggle (EN / AR) */}
         <div className="relative flex items-center w-28 h-9 bg-gray-200 rounded-full shadow-inner">
-          {/* Sliding highlight */}
           <span
             className={cn(
               "absolute w-1/2 h-full bg-gray-900 rounded-full transition-all",

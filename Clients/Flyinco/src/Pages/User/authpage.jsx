@@ -14,6 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import api from "../../lib/api"; // ✅ axios instance
+
 import bgimg from "../../assets/Cars/Header.png";
 import flagUAE from "../../assets/flags/uae.svg";
 import flagBahrain from "../../assets/flags/bahrain.svg";
@@ -46,8 +48,10 @@ export default function AuthPage() {
     setFormData((prev) => ({ ...prev, countryCode: value }));
   };
 
-  const handleSubmit = (e) => {
+  // ✅ Submit Handler
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (
       !formData.email ||
       !formData.password ||
@@ -57,11 +61,37 @@ export default function AuthPage() {
       alert("All fields are required!");
       return;
     }
+
     const fullPhone = `${formData.countryCode}${formData.phone}`;
     const payload = { ...formData, phone: fullPhone };
 
-    console.log(isLogin ? "Login Data:" : "Register Data:", payload);
-    alert(isLogin ? "Login submitted!" : "Register submitted!");
+    try {
+      const { data } = await api.post(
+        isLogin ? "/auth/login" : "/auth/register",
+        payload
+      );
+
+      // ✅ Save user info in localStorage
+      localStorage.setItem("userInfo", JSON.stringify(data));
+
+      alert(isLogin ? "Login successful ✅" : "Registration successful ✅");
+
+      // ✅ Redirect based on role
+      if (isLogin) {
+        if (data.role === "admin") {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = "/dashboard";
+        }
+      } else {
+        window.location.href = "/dashboard"; // after registration
+      }
+    } catch (err) {
+      console.error("Auth Error:", err);
+      const msg =
+        err.response?.data?.message || "Something went wrong. Please try again.";
+      alert(msg);
+    }
   };
 
   return (
@@ -177,12 +207,20 @@ export default function AuthPage() {
                       <SelectValue>
                         <div className="flex items-center gap-2">
                           <img
-                            src={countries.find((c) => c.code === formData.countryCode)?.flag}
+                            src={
+                              countries.find(
+                                (c) => c.code === formData.countryCode
+                              )?.flag
+                            }
                             alt="flag"
                             className="w-5 h-5"
                           />
                           <span>
-                            {countries.find((c) => c.code === formData.countryCode)?.abbr}{" "}
+                            {
+                              countries.find(
+                                (c) => c.code === formData.countryCode
+                              )?.abbr
+                            }{" "}
                             {formData.countryCode}
                           </span>
                         </div>
