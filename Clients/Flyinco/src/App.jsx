@@ -18,7 +18,7 @@ import DriverDashboard from "./Pages/Driver/Dashboard.jsx"; // ✅ added
 import NotAuthorized from "./Pages/User/NotAuthorised.jsx";
 import Fleet from "./Pages/User/fleet.jsx";
 import Services from "./Pages/User/Services.jsx";
-import WhyChooseUsPage from "./Pages/User/WhyChooseUs.jsx";
+import WhyChooseUsPage from "./Pages/User/Whychooseus.jsx";
 import AboutUs from "./Pages/User/AboutUs.jsx";
 import Contact from "./Pages/User/Contact.jsx";
 
