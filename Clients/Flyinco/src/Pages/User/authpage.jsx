@@ -15,6 +15,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+// ✅ Framer Motion
+import { motion } from "framer-motion";
+
 import bgimg from "../../assets/Cars/Login page with tag.jpg";
 import companyLogo from "../../assets/Flyinco.png";
 import flagUAE from "../../assets/flags/uae.svg";
@@ -79,155 +82,174 @@ export default function AuthPage() {
       className="relative w-full min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: `url(${bgimg})` }}
     >
-      <Card className="w-full max-w-md rounded-2xl shadow-2xl bg-white/70 backdrop-blur-md p-8 text-gray-800">
-        {/* Header */}
-        <div className="text-center mb-2">{/* 👈 reduced from mb-6 to mb-4 */}
-          <h1 className="text-2xl font-bold">
-            {isLogin ? "Welcome Back!" : "Create an Account"}
-          </h1>
-          <div className="w-16 h-1 bg-[#4b0082] mx-auto mt-2 rounded" />
-          <p className="mt-2 mb-2 text-sm text-gray-600">{/* 👈 added mb-2 to tighten spacing */}
-            {isLogin ? "Please log in to continue." : "Please fill details to sign up."}
-          </p>
-        </div>
+      {/* Card with fade/slide in animation */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="w-full max-w-md"
+      >
+        <Card className="w-full rounded-2xl shadow-2xl bg-white/60 backdrop-blur-md p-8 text-gray-800">
+          {/* Header */}
+          <div className="text-center mb-2">
+            <h1 className="text-2xl font-bold">
+              {isLogin ? "Welcome Back!" : "Create an Account"}
+            </h1>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-3">{/* 👈 reduced from space-y-4 */}
-          {!isLogin && (
-            <>
-              <div className="relative">
-                <User className="absolute left-3 top-3 text-gray-400" size={18} />
-                <Input
-                  name="firstName"
-                  placeholder="First Name"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className="pl-10 bg-white border-gray-300 text-gray-800 placeholder-gray-500"
-                />
-              </div>
-              <div className="relative">
-                <User className="absolute left-3 top-3 text-gray-400" size={18} />
-                <Input
-                  name="lastName"
-                  placeholder="Last Name"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="pl-10 bg-white border-gray-300 text-gray-800 placeholder-gray-500"
-                />
-              </div>
-              {/* ✅ Phone input with shadcn Select + flags */}
-              <div className="flex border border-gray-300 rounded-lg overflow-hidden">
-                <Select
-                  value={formData.countryCode}
-                  onValueChange={(val) =>
-                    setFormData((p) => ({ ...p, countryCode: val }))
-                  }
-                >
-                  <SelectTrigger className="min-w-[120px] bg-gray-100 border-none focus:ring-0 text-gray-800">
-                    <SelectValue>
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={countries.find((c) => c.code === formData.countryCode)?.flag}
-                          alt="flag"
-                          className="w-5 h-5"
-                        />
-                        <span>{formData.countryCode}</span>
-                      </div>
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {countries.map((c) => (
-                      <SelectItem key={c.code} value={c.code}>
-                        <div className="flex items-center gap-2">
-                          <img src={c.flag} alt={c.abbr} className="w-5 h-5" />
-                          <span>{c.abbr} {c.code}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {/* Animated underline */}
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: "4rem" }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+              className="h-1 bg-[#4b0082] mx-auto mt-2 rounded"
+            />
 
-                <div className="relative flex-1">
-                  <Phone className="absolute left-3 top-3 text-gray-400" size={18} />
-                  <input
-                    type="text"
-                    name="phone"
-                    placeholder="Phone Number"
-                    value={formData.phone}
+            <p className="mt-2 mb-2 text-sm text-gray-600">
+              {isLogin ? "Please log in to continue." : "Please fill details to sign up."}
+            </p>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-3">
+            {!isLogin && (
+              <>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 text-gray-400" size={18} />
+                  <Input
+                    name="firstName"
+                    placeholder="First Name"
+                    value={formData.firstName}
                     onChange={handleChange}
-                    required
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-r-lg outline-none bg-white text-gray-800 placeholder-gray-500"
+                    className="pl-10 bg-white border-gray-300 text-gray-800 placeholder-gray-500 h-12"
                   />
                 </div>
-              </div>
-            </>
-          )}
+                <div className="relative">
+                  <User className="absolute left-3 top-3 text-gray-400" size={18} />
+                  <Input
+                    name="lastName"
+                    placeholder="Last Name"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="pl-10 bg-white border-gray-300 text-gray-800 placeholder-gray-500 h-12"
+                  />
+                </div>
 
-          <div className="relative">
-            <Mail className="absolute left-3 top-3 text-gray-400" size={18} />
-            <Input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="pl-10 bg-white border-gray-300 text-gray-800 placeholder-gray-500"
-            />
-          </div>
+                {/* Phone input with flag dropdown */}
+                <div className="flex border border-gray-300 rounded-lg overflow-hidden bg-white">
+                  <Select
+                    value={formData.countryCode}
+                    onValueChange={(val) =>
+                      setFormData((p) => ({ ...p, countryCode: val }))
+                    }
+                  >
+                    <SelectTrigger className="min-w-[120px] h-12 bg-white border-none focus:ring-0 text-gray-800">
+                      <SelectValue>
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={countries.find((c) => c.code === formData.countryCode)?.flag}
+                            alt="flag"
+                            className="w-5 h-5"
+                          />
+                          <span>{formData.countryCode}</span>
+                        </div>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countries.map((c) => (
+                        <SelectItem key={c.code} value={c.code}>
+                          <div className="flex items-center gap-2">
+                            <img src={c.flag} alt={c.abbr} className="w-5 h-5" />
+                            <span>
+                              {c.abbr} {c.code}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-          <div className="relative">
-            <Lock className="absolute left-3 top-3 text-gray-400" size={18} />
-            <Input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="pl-10 bg-white border-gray-300 text-gray-800 placeholder-gray-500"
-            />
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full text-white font-semibold"
-            style={{ backgroundColor: "#4b0082" }}
-          >
-            {isLogin ? "Log In" : "Sign Up"}
-          </Button>
-        </form>
-
-        {/* Footer */}
-        <div className="mt-4 w-full">{/* 👈 reduced mt-8 to mt-4 */}
-          <div className="relative bg-gray-100 rounded-lg shadow-sm flex justify-center items-center">
-            <img src={companyLogo} alt="Company Logo" className="w-28 h-auto py-2" />
-          </div>
-          <p className="text-center text-sm text-gray-600 mt-2">{/* 👈 reduced mt-3 to mt-2 */}
-            {isLogin ? (
-              <>
-                Don’t have an account?{" "}
-                <button
-                  onClick={() => setIsLogin(false)}
-                  className="text-[#4b0082] font-semibold hover:underline"
-                >
-                  Sign up
-                </button>
-              </>
-            ) : (
-              <>
-                Already have an account?{" "}
-                <button
-                  onClick={() => setIsLogin(true)}
-                  className="text-[#4b0082] font-semibold hover:underline"
-                >
-                  Log in
-                </button>
+                  <div className="relative flex-1">
+                    <Phone className="absolute left-3 top-3 text-gray-400" size={18} />
+                    <input
+                      type="text"
+                      name="phone"
+                      placeholder="Phone Number"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                      className="w-full pl-10 pr-3 h-12 outline-none text-gray-800 placeholder-gray-500 bg-white"
+                    />
+                  </div>
+                </div>
               </>
             )}
-          </p>
-        </div>
-      </Card>
+
+            <div className="relative">
+              <Mail className="absolute left-3 top-3 text-gray-400" size={18} />
+              <Input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="pl-10 bg-white border-gray-300 text-gray-800 placeholder-gray-500 h-12"
+              />
+            </div>
+
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 text-gray-400" size={18} />
+              <Input
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="pl-10 bg-white border-gray-300 text-gray-800 placeholder-gray-500 h-12"
+              />
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full text-white font-semibold h-12"
+              style={{ backgroundColor: "#4b0082" }}
+            >
+              {isLogin ? "Log In" : "Sign Up"}
+            </Button>
+          </form>
+
+          {/* Footer */}
+          <div className="mt-4 w-full">
+            <div className="relative bg-gray-100 rounded-lg shadow-sm flex justify-center items-center">
+              <img src={companyLogo} alt="Company Logo" className="w-28 h-auto py-2" />
+            </div>
+            <p className="text-center text-sm text-gray-600 mt-2">
+              {isLogin ? (
+                <>
+                  Don’t have an account?{" "}
+                  <button
+                    onClick={() => setIsLogin(false)}
+                    className="text-[#4b0082] font-semibold hover:underline"
+                  >
+                    Sign up
+                  </button>
+                </>
+              ) : (
+                <>
+                  Already have an account?{" "}
+                  <button
+                    onClick={() => setIsLogin(true)}
+                    className="text-[#4b0082] font-semibold hover:underline"
+                  >
+                    Log in
+                  </button>
+                </>
+              )}
+            </p>
+          </div>
+        </Card>
+      </motion.div>
     </div>
   );
 }
