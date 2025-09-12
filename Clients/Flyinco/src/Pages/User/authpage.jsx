@@ -81,7 +81,7 @@ export default function AuthPage() {
     >
       <Card className="w-full max-w-md rounded-2xl shadow-2xl bg-white/70 backdrop-blur-md p-8 text-gray-800">
         {/* Header */}
-        <div className="text-center mb-4">{/* 👈 reduced from mb-6 to mb-4 */}
+        <div className="text-center mb-2">{/* 👈 reduced from mb-6 to mb-4 */}
           <h1 className="text-2xl font-bold">
             {isLogin ? "Welcome Back!" : "Create an Account"}
           </h1>
