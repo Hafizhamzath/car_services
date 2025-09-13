@@ -1,23 +1,22 @@
-// src/App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Pages/User/Home.jsx";
 import BookingForm from "./Pages/User/BookNow.jsx";
-import AuthPage from "./Pages/User/AuthPage.jsx";
-import ProfilePage from "./Pages/User/Profile.jsx";
+import AuthPage from "./Pages/User/authpage.jsx";
+import ProfilePage from "./Pages/User/profile.jsx";
 
 // Admin
 import AdminLayout from "./components/admin/AdminLayout.jsx";
-import Dashboard from "./Pages/admin/Dashboard.jsx";
-import Users from "./Pages/admin/User.jsx";
+import Dashboard from "./Pages/admin/dashboard.jsx";
+import Users from "./Pages/admin/user.jsx";
 import Bookings from "./Pages/admin/Booking.jsx";
 import Drivers from "./Pages/admin/Driver.jsx";
 
 // Driver
-import DriverDashboard from "./Pages/Driver/Dashboard.jsx";
+import DriverDashboard from "./Pages/Driver/Dashboard.jsx"; // ✅ added
 
 // Fallback
 import NotAuthorized from "./Pages/User/NotAuthorised.jsx";
-import Fleet from "./Pages/User/Fleet.jsx";
+import Fleet from "./Pages/User/fleet.jsx";
 import Services from "./Pages/User/Services.jsx";
 import WhyChooseUsPage from "./Pages/User/Whychooseus.jsx";
 import AboutUs from "./Pages/User/AboutUs.jsx";
@@ -44,7 +43,7 @@ export default function App() {
       {/* Admin routes */}
       {isAdmin ? (
         <Route path="/admin" element={<AdminLayout />}>
-          {/* 👇 Default redirect */}
+          {/* ✅ redirect /admin -> /admin/dashboard */}
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="users" element={<Users />} />
