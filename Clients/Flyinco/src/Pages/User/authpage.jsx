@@ -68,7 +68,7 @@ export default function AuthPage() {
       );
       localStorage.setItem("userInfo", JSON.stringify(data));
       if (data.role === "admin") {
-        window.location.href = "/admin";
+        window.location.href = "/admin/dashboard"; // ✅ go directly to dashboard
       } else {
         window.location.href = "/";
       }
