@@ -23,9 +23,9 @@ import AboutUs from "./Pages/User/AboutUs.jsx";
 import Contact from "./Pages/User/Contact.jsx";
 
 export default function App() {
-  // ✅ get user role from localStorage
+  // ✅ get user role from localStorage (normalized)
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const isAdmin = userInfo?.role === "admin";
+  const isAdmin = userInfo?.role?.toLowerCase() === "admin";
 
   return (
     <Routes>
