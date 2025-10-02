@@ -3,6 +3,7 @@ import Booking from "../models/Booking.js";
 import PDFDocument from "pdfkit";
 import path from "path";
 import { fileURLToPath } from "url";
+import { PassThrough } from "stream";
 
 const router = express.Router();
 console.log("📂 reports.js loaded");
@@ -48,15 +49,20 @@ router.get("/", async (req, res) => {
       createdAt: { $gte: start, $lte: end },
     }).populate("user assignedDriver");
 
+    // ✅ Instead of piping directly to res, we collect into buffer
     const doc = new PDFDocument({ size: "A4", margin: 40 });
+    const chunks = [];
 
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=booking-report.pdf"
-    );
-
-    doc.pipe(res);
+    doc.on("data", (chunk) => chunks.push(chunk));
+    doc.on("end", () => {
+      const pdfBuffer = Buffer.concat(chunks);
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=booking-report.pdf"
+      );
+      res.send(pdfBuffer); // ✅ send full PDF at once
+    });
 
     // ===== HEADER =====
     doc.font("Helvetica-Bold").fontSize(12).text("Flyinco Travel & Tourism W.L.L", 40, 40);
@@ -134,6 +140,14 @@ router.get("/", async (req, res) => {
       if (rowY > 750) {
         doc.addPage();
         rowY = 50;
+        // Redraw header on new page
+        drawCell(startX, rowY, colWidths[0], rowHeight, "No", true);
+        drawCell(startX + colWidths[0], rowY, colWidths[1], rowHeight, "Customer", true);
+        drawCell(startX + colWidths[0] + colWidths[1], rowY, colWidths[2], rowHeight, "Driver", true);
+        drawCell(startX + colWidths[0] + colWidths[1] + colWidths[2], rowY, colWidths[3], rowHeight, "Service", true);
+        drawCell(startX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3], rowY, colWidths[4], rowHeight, "Date", true);
+
+        rowY += rowHeight;
       }
     });
 
@@ -146,11 +160,12 @@ router.get("/", async (req, res) => {
       { align: "center" }
     );
 
-    doc.end();
-    console.log("✅ Report generated successfully!");
+    doc.end(); // ✅ finishes writing PDF to buffer
   } catch (err) {
     console.error("❌ Report generation error:", err.message);
-    res.status(500).json({ message: err.message, stack: err.stack });
+    if (!res.headersSent) {
+      res.status(500).json({ message: err.message, stack: err.stack });
+    }
   }
 });
 
